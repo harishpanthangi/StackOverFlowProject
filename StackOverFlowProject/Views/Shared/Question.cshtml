@@ -1,9 +1,9 @@
 ﻿@model StackOverFlowProject.ViewModels.QuestionViewModel
 
 <tr>
-    <td><span class="badge bg-secondary">@Model.VotesCount</span></td>
-    <td><span class="badge bg-secondary">@Model.AnswersCount</span></td>
-    <td><span class="badge bg-secondary">@Model.ViewsCount</span></td>
+    <td><span class="badge bg-secondary">@Model.VotesCount</span> Votes</td>
+    <td><span class="badge bg-secondary">@Model.AnswersCount</span>Answers</td>
+    <td><span class="badge bg-secondary">@Model.ViewsCount</span>Views</td>
     <td class="text-dark">
         <a href="/questions/view/@Model.QuestionId" class="text-primary">@Model.QuestionName</a>
         <br />
