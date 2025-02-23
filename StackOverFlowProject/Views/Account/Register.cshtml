@@ -1,0 +1,122 @@
+﻿
+@{
+    ViewBag.Title = "Register";
+}
+<div class="form-row">
+    <div class="col-sm-12">
+        <h1>Registration</h1>
+        <form novalidate="novalidate" action="/account/register" method="post" class="needs-validation">
+            @Html.AntiForgeryToken()
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label for="txtName">Name</label>
+                    <input type="text" class="form-control" id="txtName" placeholder="Enter Name" name="Name" required="required" pattern="^[a-zA-Z ]*$" autofocus="autofocus" />
+                    <div class="valid-feedback">
+                        Looks Good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Please enter name (alphabets only)
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="txtEmail">Email</label>
+                    <input type="email" class="form-control" id="txtEmail" placeholder="Enter Email" name="Email" required="required" />
+                    <div class="valid-feedback">
+                        Looks Good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Invalid email
+                    </div>
+                    <small class="email-exist"></small>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="txtMobile">Mobile</label>
+                    <input type="tel" class="form-control" id="txtMoble" placeholder="Enter Mobile Number" name="Mobile" required="required" pattern="^[6789]\d{9}$" />
+                    <div class="valid-feedback">
+                        Looks Good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Invalid moblie number
+                    </div>
+                </div>
+
+                <div class="form-group col-sm-6">
+                    <label for="txtPassword">Password</label>
+                    <input type="password" class="form-control" id="txtPassword" placeholder="Password" name="Password" required="required" minlength="6" />
+                    <div class="valid-feedback">
+                        Looks Good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Password must contain atleast 6 characters
+                    </div>
+                </div>
+                <div class="form-group col-sm-6">
+                    <label for="txtCnfPassword">Confirm Password</label>
+                    <input type="password" class="form-control" id="txtCnfPassword" placeholder="Confirm Password" name="ConfirmPassword" required="required" />
+                    <div class="valid-feedback">
+                        Looks Good!
+                    </div>
+                    <div class="invalid-feedback">
+                        Password and Confirm Password do not match
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Register</button>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        // Function to validate fields instantly
+        function validateField(field) {
+            if (!field.checkValidity()) {
+                $(field).addClass("is-invalid").removeClass("is-valid");
+            } else {
+                $(field).addClass("is-valid").removeClass("is-invalid");
+            }
+        }
+
+        // Validate fields on input (while typing) and on blur (when moving away)
+        $(".needs-validation input").on("input blur", function () {
+            validateField(this);
+        });
+
+        // Confirm Password validation
+        $("#txtCnfPassword").on("input", function () {
+            if (this.value !== $("#txtPassword").val()) {
+                this.setCustomValidity("Passwords do not match");
+                $(this).addClass("is-invalid").removeClass("is-valid");
+            } else {
+                this.setCustomValidity("");
+                $(this).addClass("is-valid").removeClass("is-invalid");
+            }
+        });
+
+        // Validate form on submit
+        $(".needs-validation").on("submit", function (event) {
+            if (!this.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            $(this).addClass("was-validated");
+        });
+    });
+    $("#txtEmail").blur(function () {
+        $.ajax({
+            url: "/api/account?email=" + $("#txtEmail").val(), type: "GET", success:
+                function (response) {
+                    if (response == "Not Found") {
+                        $(".email-exist").text("");
+                        $(".email-exist").parent(".form-group").find(".valid-feedback").css("color", "#28a745");
+                    }else{
+                        $(".email-exist").text("Email already registered");
+                        $(".email-exist").css("color","red")
+                        $(".email-exist").parent(".form-group").find(".valid-feedback").css("color", "white");
+                        $(".btn-primary").prop("disabled", true);
+                    }
+                }
+        })
+    })
+</script>

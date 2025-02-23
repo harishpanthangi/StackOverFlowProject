@@ -1,0 +1,74 @@
+﻿@using System.Web.Optimization
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta charset="utf-8" />
+    <title>@ViewBag.Title - StackOverFlow</title>
+    @Styles.Render("~/Styles/bootstrap")
+    @Styles.Render("~/Styles/site")
+    @*@Scripts.Render("~/bundles/bootstrap")*@
+
+    <script src="~/Scripts/jquery-3.7.1.js"></script>
+    <script src="~/Scripts/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-sm text-light navbar-light">
+            <a class="navbar-brand" href="#">StackOverFlow</a>
+
+            <button class="navbar-toggler" data-toggle="collapse" data-target="#collapsibleNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="collapsibleNavbar">
+                <ul class="navbar-nav">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="/home/index">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home/about">About</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home/contact">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/home/categories">Categories</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/allquestions">Questions</a>  @*here we have used attribute routing*@
+                    </li>
+                    @if (Session["CurrentUserName"] == null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account/login">Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/account/register">Register</a>
+                        </li>
+                    }
+                    @if (Session["CurrentUserName"] != null)
+                    {
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <img src="~/Images/profile.jpeg" class="w-20"/>
+                            @Session["CurrentUserName"]
+                            </a>
+                            <div class="dropdown-menu bg-info">
+                                <a class="dropdown-item" href="/account/logout">Logout</a>
+                                <a class="dropdown-item" href="/account/editprofile">Edit Profile</a>
+                                <a class="dropdown-item" href="/account/changepassword">Change Password</a>
+                            </div>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <form class="d-flex" action="/home/search">
+                <input type="search" class="form-control me-sm-2" style="width:150px" placeholder="Search" name="str" />
+                <button class="btn btn-success">Search</button>
+            </form>
+        </nav>
+        @RenderBody()
+    </div>
+</body>
+</html>

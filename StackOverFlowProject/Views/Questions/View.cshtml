@@ -1,0 +1,191 @@
+﻿@model StackOverFlowProject.ViewModels.QuestionViewModel
+@{
+    ViewBag.Title = "View Question";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group row">
+            <div class="col-sm-10 offset-sm-2">
+                <h3>@Model.QuestionName</h3>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <span class="badge bg-info">@Model.Category.CategoryName</span>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="text-info">
+                            @if (Convert.ToInt32(Session["CurrentUserId"]) != Model.UserId)
+                            {
+                                @:by @Model.User.Name
+                            }
+                            else
+                            {
+                                @:by you
+                            }
+                        </span>
+                    </div>
+                    <div class="col-sm-3">
+                        <span class="text-success">on @Model.QuestionDateAndTime</span>
+                    </div>
+                    <div class="col-sm-2">
+                        <span class="badge rounded-pill bg-success">@Model.ViewsCount</span> Views
+                    </div>
+                </div>
+                @if (Model.AnswersCount == 0)
+                {
+                    <p class="text-danger">No Answers yet!</p>
+                }
+            </div>
+        </div>
+        <hr />
+        @if (Model.Answers != null && Model.Answers.Count > 0)
+        {
+            for (int i = 0; i < Model.Answers.Count; i++)
+            {
+                <div class="form-group row mt-3">
+                    <div class="col-sm-2">
+                        <span class="badge bg-secondary col-2 votescount">
+                            @Model.Answers[i].VotesCount
+                        </span> Votes
+                        @if (Session["CurrentUserName"] != null && Convert.ToInt32(Session["CurrentUserId"]) != Model.Answers[i].UserId)
+                        {
+                            if (Model.Answers[i].CurrentUserVoteType == 1)
+                            {
+                                <img src="~/Images/up_color.png" class="btnUpVote" style="cursor:pointer; width:16px;" data-answerid="@Model.Answers[i].AnswerId" />
+                                <img src="~/Images/down_black.png" class="btnDownVote" style="cursor:pointer; width:24px;" data-answerid="@Model.Answers[i].AnswerId" />
+                            }
+                            else if (Model.Answers[i].CurrentUserVoteType == -1)
+                            {
+                                <img src="~/Images/up_black.png" class="btnUpVote" style="cursor:pointer; width:24px;" data-answerid="@Model.Answers[i].AnswerId" />
+                                <img src="~/Images/down_color.png" class="btnDownVote" style="cursor:pointer; width:24px;" data-answerid="@Model.Answers[i].AnswerId" />
+                            }
+                            else
+                            {
+                                <img src="~/Images/up_black.png" class="btnUpVote" style="cursor:pointer; width:15px;" data-answerid="@Model.Answers[i].AnswerId" />
+                                <img src="~/Images/down_black.png" class="btnDownVote" style="cursor:pointer; width:24px" data-answerid="@Model.Answers[i].AnswerId" />
+                            }
+                        }
+                    </div>
+                    <div class="col-sm-7">
+                        @if (Convert.ToInt32(Session["CurrentUserId"]) != Model.Answers[i].UserId)
+                        {
+                            @Model.Answers[i].AnswerText
+                        }
+                        else
+                        {
+                            <p class="answer mb-0">@Model.Answers[i].AnswerText</p>
+                            <button class="btn btn-info editbutton">Edit</button>
+                            <form class="needs-validatin hidden" novalidate="novalidate" action="/questions/editanswer" method="post">
+                                <div class="form-group row">
+                                    <div class="col-sm-12">
+                                        <h4>Edit your answer</h4>
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="AnswerId" value="@Model.Answers[i].AnswerId" />
+                                        <input type="hidden" name="QuestionId" value="@Model.Answers[i].QuestionId" />
+                                        <div class="row">
+                                            <div class="form-group col-sm-12">
+                                                <textarea class="form-control" id="txtAnswer" name="AnswerText" placeholder="Enter your answer" required>@Model.Answers[i].AnswerText</textarea>
+                                                <div class="invalid-feedback">
+                                                    Please enter answer.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-2">Update Answer</button>
+                                        <div class="text-danger">
+                                            @Html.ValidationSummary()
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                    <div class="col-sm-1">
+                        @if (Convert.ToInt32(Session["CurrentUserId"]) != Model.Answers[i].UserId)
+                        {
+                            @:by @Model.Answers[i].User.Name
+                        }
+                        else
+                        {
+                            @:by you
+                        }
+                    </div>
+                    <div class="col-sm-2">
+                        on @Model.Answers[i].AnswerDateAndTime
+                    </div>
+                </div>
+            }
+        }
+
+        @if (Session["CurrentUserName"] != null)
+        {
+            <form class="needs-validatin" novalidate="novalidate" action="/questions/addanswer" method="post">
+                <div class="form-group row">
+                    <div class="col-sm-12">
+                        <h4>Add your answer</h4>
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="QuestionId" value="@Model.QuestionId" />
+                        <div class="row">
+                            <div class="form-group col-sm-12">
+                                <textarea class="form-control" id="txtAnswer" name="AnswerText" placeholder="Enter your answer" required></textarea>
+                                <div class="invalid-feedback">
+                                    Please enter answer.
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary mt-2">Add Answer</button>
+                        <div class="text-danger">
+                            @Html.ValidationSummary()
+                        </div>
+                    </div>
+                </div>
+            </form>
+        }
+    </div>
+</div>
+
+<script>
+    $(".btnUpVote").click(function () {
+        var UpBtn = $(this);
+        var DownBtn = UpBtn.parent().find(".btnDownVote");
+        if (UpBtn.attr("src") == "/Images/up_black.png") {
+            var value;
+            if (UpBtn.attr("src") == "/Images/up_black.png" && DownBtn.attr("src") == "/Images/down_black.png")
+                value = 1;
+            else
+                value = 2;
+            $.ajax({
+                url: "/api/questions/UpdateAnswerVotes?aId=" + UpBtn.attr("data-answerid") + "&uId=@Session["CurrentUserId"]&value=" + value, type: "POST", success: function (response) {
+                    UpBtn.parent().find(".votescount").text(parseInt(UpBtn.parent().find(".votescount").text()) + value);
+                    UpBtn.attr("src", "/Images/up_color.png");
+                    DownBtn.attr("src", "/Images/down_black.png");
+                    }
+                });
+        }
+    })
+
+    $(".btnDownVote").click(function () {
+    var DownBtn = $(this);
+    var UpBtn = DownBtn.parent().find(".btnUpVote");
+    if (DownBtn.attr("src") == "/Images/down_black.png") {
+        var value;
+        if (UpBtn.attr("src") == "/Images/up_black.png" && DownBtn.attr("src") == "/Images/down_black.png")
+            value = -1;
+        else
+            value = -2;
+        $.ajax({
+            url: "/api/questions/UpdateAnswerVotes?aId=" + UpBtn.attr("data-answerid") + "&uId=@Session["CurrentUserId"]&value=" + value, type: "POST", success: function (response) {
+                DownBtn.parent().find(".votescount").text(parseInt(DownBtn.parent().find(".votescount").text()) + value);
+                DownBtn.attr("src", "/Images/down_color.png");
+                UpBtn.attr("src", "/Images/up_black.png");
+                }
+            });
+    }
+})
+</script>
+<script>
+    $(".editbutton").click(function () {
+        $(this).parent().find(".needs-validatin").show();
+        $(this).hide();
+        $(this).parent().find(".answer").hide();
+    })
+</script>

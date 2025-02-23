@@ -1,0 +1,61 @@
+﻿@model List<StackOverFlowProject.ViewModels.QuestionViewModel>
+@{
+    ViewBag.Title = "Create";
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <h1>Create Question</h1>
+        <form class="needs-validation" novalidate="novalidate" action="/questions/create" method="post">
+            <div class="row">
+                <div class="form-group col-sm-12">
+                    <label for="txtQuestionName">Question</label>
+                    <textarea class="form-control" autofocus="autofocus" id="txtQuestionName" placeholder="Enter Question" name="QuestionName" required="required"></textarea>
+                    <div class="invalid-feedback">
+                        Please enter question
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="form-group col-sm-6">
+                    <label for="drpCategory">Category</label>
+                    <select class="form-control" name="CategoryId" id="drpCategory" required="required" >
+                        <option value="">Please Select</option>
+                        @foreach (var item in ViewBag.categories)
+                        {
+                            <option value="@item.CategoryId">@item.CategoryName</option>
+                        }
+                    </select>
+                    <div class="invalid-feedback">
+                        Category can't be empty
+                    </div>
+                </div>
+            </div>
+            <button class="btn btn-primary mt-2" type="submit">Add Question</button>
+            @Html.ValidationSummary()
+        </form>
+    </div>
+</div>
+
+<script>
+    function validateField(field) {
+        if (!field.checkValidity()) {
+            $(field).addClass("is-invalid").removeClass("is-valid");
+        } else {
+            $(field).addClass("is-valid").removeClass("is-invalid");
+        }
+    }
+
+    // Validate fields on input (while typing) and on blur (when moving away)
+    $(".needs-validation input").on("input blur", function () {
+        validateField(this);
+    });
+
+    $(".needs-validation").on("submit", function (event) {
+        if (!this.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        $(this).addClass("was-validated");
+    });
+</script>
