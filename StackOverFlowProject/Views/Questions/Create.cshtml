@@ -7,6 +7,7 @@
     <div class="col-sm-12">
         <h1>Create Question</h1>
         <form class="needs-validation" novalidate="novalidate" action="/questions/create" method="post">
+            @Html.AntiForgeryToken()
             <div class="row">
                 <div class="form-group col-sm-12">
                     <label for="txtQuestionName">Question</label>
@@ -19,7 +20,7 @@
             <div class="row">
                 <div class="form-group col-sm-6">
                     <label for="drpCategory">Category</label>
-                    <select class="form-control" name="CategoryId" id="drpCategory" required="required" >
+                    <select class="form-control" name="CategoryId" id="drpCategory" required="required">
                         <option value="">Please Select</option>
                         @foreach (var item in ViewBag.categories)
                         {
